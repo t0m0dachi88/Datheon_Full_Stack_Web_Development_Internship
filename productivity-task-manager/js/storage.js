@@ -1,0 +1,3 @@
+export const STORAGE_KEY='productivity_tasks';
+export function loadFromLocalStorage(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw===null)return [];const parsed=JSON.parse(raw);if(!Array.isArray(parsed))throw Error('Stored tasks are not an array');return parsed.filter(t=>t&&typeof t.id==='string'&&typeof t.title==='string'&&['Work','Personal','Study','Other'].includes(t.category)).map(t=>({...t,completed:!!t.completed,dueDate:typeof t.dueDate==='string'?t.dueDate:''}));}catch(e){console.warn('Could not read saved tasks',e);return null}}
+export function saveToLocalStorage(tasks){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));return true}catch(e){console.error('Could not save tasks',e);return false}}

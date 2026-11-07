@@ -1,0 +1,10 @@
+export const categories=['Work','Personal','Study','Other'];
+export function validDate(value){if(!value)return true;if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;const [y,m,d]=value.split('-').map(Number);const date=new Date(y,m-1,d);return date.getFullYear()===y&&date.getMonth()===m-1&&date.getDate()===d}
+export function validateTask(data){if(!data.title?.trim())throw Error('Please enter a task title.');if(data.title.trim().length>160)throw Error('Title is too long.');if(!categories.includes(data.category))throw Error('Choose a valid category.');if(!validDate(data.dueDate))throw Error('Choose a valid due date.')}
+export function addTask(tasks,data){validateTask(data);const now=new Date().toISOString();const id=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;return [{id,title:data.title.trim(),description:data.description.trim(),category:data.category,dueDate:data.dueDate,completed:false,createdAt:now,updatedAt:now},...tasks]}
+export function updateTask(tasks,id,data){validateTask(data);if(!tasks.some(t=>t.id===id))throw Error('This task no longer exists.');return tasks.map(t=>t.id===id?{...t,title:data.title.trim(),description:data.description.trim(),category:data.category,dueDate:data.dueDate,updatedAt:new Date().toISOString()}:t)}
+export function deleteTask(tasks,id){if(!tasks.some(t=>t.id===id))throw Error('This task no longer exists.');return tasks.filter(t=>t.id!==id)}
+export function toggleTaskCompletion(tasks,id){if(!tasks.some(t=>t.id===id))throw Error('This task no longer exists.');return tasks.map(t=>t.id===id?{...t,completed:!t.completed,updatedAt:new Date().toISOString()}:t)}
+export function clearCompletedTasks(tasks){return tasks.filter(t=>!t.completed)}
+export function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+export function dueStatus(t){if(!t.dueDate)return 'none';if(t.completed)return 'completed';const today=todayISO();return t.dueDate<today?'overdue':t.dueDate===today?'today':'upcoming'}
