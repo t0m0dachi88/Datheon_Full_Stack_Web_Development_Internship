@@ -1,0 +1,2 @@
+const KEY='atmos_recent_cities';export function loadRecent(){try{const result=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(result)?result.filter(x=>x&&typeof x.name==='string'&&Number.isFinite(x.lat)&&Number.isFinite(x.lon)).slice(0,5):[]}catch{return []}}
+export function saveRecent(city){try{const existing=loadRecent().filter(x=>!(x.lat===city.lat&&x.lon===city.lon));localStorage.setItem(KEY,JSON.stringify([city,...existing].slice(0,5)))}catch{/* Storage disabled; app remains usable. */}}
